@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class VoteDetailRes {
 
-    private long id;
+    private long voteId;
     private long voterId;
     private long targetId;
     private long questionId;

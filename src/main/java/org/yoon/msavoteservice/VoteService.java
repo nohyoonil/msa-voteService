@@ -1,5 +1,7 @@
 package org.yoon.msavoteservice;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.yoon.msavoteservice.kafka.KafkaProducer;
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 public class VoteService {
 
     private final KafkaProducer kafkaProducer;
+    private final ObjectMapper objectMapper;
     private final VoteRepository voteRepository;
 
     public VoteDetailRes vote(long userId, VoteInfoReq req) {
@@ -23,9 +26,15 @@ public class VoteService {
                 .createdAt(LocalDateTime.now())
                 .build());
 
-        kafkaProducer.send("vote.created", "test123");
-        System.out.println("send vote created");
+        VoteDetailRes voteDetailRes = Vote.to(vote);
 
-        return Vote.to(vote);
+        try {
+            kafkaProducer.send("validate.question", objectMapper.writeValueAsString(voteDetailRes));
+            System.out.println("send vote.created");
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return voteDetailRes;
     }
 }

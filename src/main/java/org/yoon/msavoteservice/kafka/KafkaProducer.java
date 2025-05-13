@@ -13,7 +13,7 @@ public class KafkaProducer {
 
     public void send(String topic, String message) {
         try {
-            kafkaTemplate.send(topic, message).get();
+            kafkaTemplate.send(topic, message);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

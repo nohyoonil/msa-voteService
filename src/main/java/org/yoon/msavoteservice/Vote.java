@@ -29,7 +29,7 @@ public class Vote {
 
     public static VoteDetailRes to(Vote vote) {
         return VoteDetailRes.builder()
-                .id(vote.getId())
+                .voteId(vote.getId())
                 .voterId(vote.getVoterId())
                 .targetId(vote.getTargetId())
                 .questionId(vote.getQuestionId())
