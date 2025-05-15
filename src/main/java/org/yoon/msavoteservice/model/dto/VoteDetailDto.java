@@ -1,4 +1,4 @@
-package org.yoon.msavoteservice.model.response;
+package org.yoon.msavoteservice.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @AllArgsConstructor
-public class VoteDetailRes {
+public class VoteDetailDto {
 
     private long voteId;
     private long voterId;
@@ -19,11 +19,12 @@ public class VoteDetailRes {
     private boolean opened;
     private LocalDateTime createdAt;
 
-    public static VoteDetailRes from(Vote vote) {
-        return VoteDetailRes.builder()
+    public static VoteDetailDto from(Vote vote) {
+        return VoteDetailDto.builder()
                 .voteId(vote.getId())
                 .voterId(vote.getVoterId())
                 .targetId(vote.getTargetId())
+                .questionId(vote.getQuestionId())
                 .opened(vote.isOpened())
                 .createdAt(vote.getCreatedAt())
                 .build();

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.yoon.msavoteservice.kafka.KafkaProducer;
+import org.yoon.msavoteservice.model.dto.VoteDetailDto;
 import org.yoon.msavoteservice.model.request.VoteInfoReq;
 import org.yoon.msavoteservice.model.response.VoteDetailRes;
 
@@ -26,15 +27,12 @@ public class VoteService {
                 .createdAt(LocalDateTime.now())
                 .build());
 
-        VoteDetailRes voteDetailRes = Vote.to(vote);
-
         try {
-            kafkaProducer.send("validate.question", objectMapper.writeValueAsString(voteDetailRes));
-            System.out.println("send vote.created");
+            kafkaProducer.send("validate.question", objectMapper.writeValueAsString(VoteDetailDto.from(vote)));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
 
-        return voteDetailRes;
+        return VoteDetailRes.from(vote);
     }
 }

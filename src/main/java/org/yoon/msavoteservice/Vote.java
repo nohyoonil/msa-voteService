@@ -26,14 +26,4 @@ public class Vote {
     private long questionId;
     private boolean opened;
     private LocalDateTime createdAt;
-
-    public static VoteDetailRes to(Vote vote) {
-        return VoteDetailRes.builder()
-                .voteId(vote.getId())
-                .voterId(vote.getVoterId())
-                .targetId(vote.getTargetId())
-                .questionId(vote.getQuestionId())
-                .createdAt(vote.getCreatedAt())
-                .build();
-    }
 }
