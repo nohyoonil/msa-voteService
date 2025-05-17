@@ -7,6 +7,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.yoon.msavoteservice.kafka.KafkaProducer;
 import org.yoon.msavoteservice.model.dto.OpenInfoDto;
+import org.yoon.msavoteservice.model.dto.QuestionPlusVotedSumDto;
 import org.yoon.msavoteservice.model.dto.VoteDetailDto;
 import org.yoon.msavoteservice.model.request.VoteInfoReq;
 import org.yoon.msavoteservice.model.response.VoteDetailRes;
@@ -39,15 +40,14 @@ public class VoteService {
                 .createdAt(LocalDateTime.now())
                 .build());
 
-        VoteDetailDto dto = VoteDetailDto.builder()
-                .voteId(vote.getId())
-                .voterId(vote.getVoterId())
-                .targetId(vote.getTargetId())
-                .questionId(vote.getQuestionId())
-                .createdAt(vote.getCreatedAt()).build();
+        VoteDetailDto dto = VoteDetailDto.from(vote);
 
         try {
             kafkaProducer.send("vote.created", objectMapper.writeValueAsString(dto)); // 알림 요청 발행
+            kafkaProducer.send("voter.plusVoteSum", String.valueOf(userId));
+            kafkaProducer.send("target.plusVotedSum", String.valueOf(targetId));
+            kafkaProducer.send("question.plusVotedSum",
+                    objectMapper.writeValueAsString(new QuestionPlusVotedSumDto(questionId, targetId)));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
