@@ -44,10 +44,10 @@ public class VoteService {
 
         try {
             kafkaProducer.send("vote.created", objectMapper.writeValueAsString(dto)); // 알림 요청 발행
-            kafkaProducer.send("voter.plusVoteSum", String.valueOf(userId));
-            kafkaProducer.send("target.plusVotedSum", String.valueOf(targetId));
+            kafkaProducer.send("member.plusVoteSum", String.valueOf(userId));
+            kafkaProducer.send("member.plusVotedSum", String.valueOf(targetId));
             kafkaProducer.send("question.plusVotedSum",
-                    objectMapper.writeValueAsString(new QuestionPlusVotedSumDto(questionId, targetId)));
+                    objectMapper.writeValueAsString(new QuestionPlusVotedSumDto(questionId, vote.getVoterId())));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
